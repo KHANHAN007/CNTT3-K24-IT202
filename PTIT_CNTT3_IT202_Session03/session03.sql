@@ -3,10 +3,6 @@ DROP DATABASE IF EXISTS SchoolManagement;
 CREATE DATABASE SchoolManagement;
 USE SchoolManagement;
 
-SET SQL_SAFE_UPDATES = 0;
-SET FOREIGN_KEY_CHECKS = 0;
-
-
 CREATE TABLE Student (
     student_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,            
@@ -69,10 +65,10 @@ UPDATE Student SET date_of_birth = '1999-12-31' WHERE student_id = 2;
 DELETE FROM Student WHERE student_id = 5;
 
 INSERT INTO Subject (subject_name, credit) VALUES 
-('Toan Cao Cap', 3),       -- ID 1
-('Tin Hoc Dai Cuong', 2),  -- ID 2
-('Triet Hoc', 3),          -- ID 3
-('Lap Trinh Java', 4);     -- ID 4
+('Toan Cao Cap', 3),       
+('Tin Hoc Dai Cuong', 2),  
+('Triet Hoc', 3),          
+('Lap Trinh Java', 4);     
 
 UPDATE Subject SET credit = 3 WHERE subject_id = 2;
 UPDATE Subject SET subject_name = 'Toan Cao Cap A1' WHERE subject_id = 1;
