@@ -36,9 +36,16 @@ values(101,'IT01',5),
       (104,'IT04',6),
       (105,'IT05',3);
       
+insert into enrollment(grade,student_id,courge_id)
+values(9,1,101),
+      (5,2,102),
+      (3,3,103),
+      (4,4,104),
+      (2,5,105);
+      
 update Enrollment
-set grade=9
-where student_id=2 and courge_id=3;
+set grade = 9
+where student_id = 2 and courge_id = 102;
 
 select student_name,student_email,student_phone from Student;
 
