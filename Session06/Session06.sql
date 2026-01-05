@@ -4,15 +4,15 @@ use Session06;
 -- Bai 1: 
 CREATE TABLE customers (
     customer_id INT PRIMARY KEY AUTO_INCREMENT,
-    full_name VARCHAR(255),
-    city VARCHAR(255)
+    full_name VARCHAR(255) NOT NULL,
+    city VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE orders (
-    order_id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT,
-    order_date DATE,
-    status ENUM('pending', 'completed', 'cancelled'),
+     order_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    order_date DATE NOT NULL,
+    status ENUM('pending', 'completed', 'cancelled') NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 );
 
@@ -123,8 +123,8 @@ HAVING SUM(total_amount) > 10000000;
 -- Bai 4: 
 CREATE TABLE products (
     product_id INT PRIMARY KEY AUTO_INCREMENT,
-    product_name VARCHAR(255),
-    price DECIMAL(10,2)
+    product_name VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL
 );
 
 CREATE TABLE order_items (
