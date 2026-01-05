@@ -6,11 +6,6 @@ CREATE TABLE orders(
     order_status ENUM('pending','completed','cancelled')
 );
 
-SELECT * FROM orders WHERE order_status='completed';
-SELECT * FROM orders WHERE total_amount>5000000;
-SELECT * FROM orders ORDER BY order_date DESC LIMIT 5 OFFSET 0;
-SELECT * FROM orders WHERE order_status='completed' ORDER BY total_amount DESC;
-
 INSERT INTO orders (customer_id, total_amount, order_date, order_status) VALUES
 (1, 1200000, '2025-01-01', 'completed'),
 (2, 2500000, '2025-01-02', 'pending'),
