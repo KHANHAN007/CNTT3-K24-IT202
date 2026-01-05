@@ -23,11 +23,15 @@ UPDATE Orders
 	SET total_amount = 450000000
 	WHERE order_id = 5;
     
-SELECT c.customer_id, c.full_name, o.total_amount
-	FROM Customers c
-    JOIN Orders o ON c.customer_id = o.customer_id;
+SELECT c.full_name, SUM(o.total_amount) AS total_spent
+	FROM customers c
+	JOIN orders o ON c.customer_id = o.customer_id
+	GROUP BY c.customer_id, c.full_name
+	ORDER BY total_spent DESC;
+
     
-SELECT c.customer_id, c.full_name, o.total_amount
-	FROM Customers c
-    JOIN Orders o ON c.customer_id = o.customer_id
-    ORDER BY o.total_amount DESC;
+SELECT c.full_name, MAX(o.total_amount) AS max_order_value
+	FROM customers c
+	JOIN orders o ON c.customer_id = o.customer_id
+	GROUP BY c.customer_id, c.full_name
+	ORDER BY max_order_value DESC;
