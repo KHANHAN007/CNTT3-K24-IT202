@@ -88,28 +88,53 @@ join rooms r
 	on b.room_id = r.room_id;
     
 -- ● Cho biết mỗi khách đã đặt phòng bao nhiêu lần 
-select  COUNT(g.guest_name) as 'TongSoLanDatPhong'
-from  guests g
-join booking b 
-	on g.guest_id = b.guest_id
-group by g.guest_name;
+SELECT g.guest_name, COUNT(b.booking_id) as 'TongSoLanDatPhong'
+FROM guests g
+JOIN bookings b ON g.guest_id = b.guest_id
+GROUP BY g.guest_id, g.guest_name;
 	
 -- ● Tính doanh thu của mỗi phòng, với công thức: “Doanh thu = số ngày ở 
 -- × giá thuê theo ngày” 
-
+SELECT 
+    b.booking_id,
+    g.guest_name,
+    r.room_type,
+    r.price_per_day,
+    DATEDIFF(b.check_out, b.check_in) as SoNgayO,
+    (DATEDIFF(b.check_out, b.check_in) * r.price_per_day) as ThanhTien
+FROM bookings b
+JOIN rooms r ON b.room_id = r.room_id
+JOIN guests g ON b.guest_id = g.guest_id;
 -- ● Hiển thị tổng doanh thu của từng loại phòng 
-
+SELECT 
+    r.room_type,
+    SUM(DATEDIFF(b.check_out, b.check_in) * r.price_per_day) as TongDoanhThu
+FROM bookings b
+JOIN rooms r ON b.room_id = r.room_id
+GROUP BY r.room_type;
 -- ● Tìm những khách đã đặt phòng từ 2 lần trở lên 
-select g.guest_name, COUNT(g.guest_name) as 'TongSoLanDatPhong'
-from  guests g
-join booking b 
-	on g.guest_id = b.guest_id
-group by g.guest_name
-having  TongSoLanDatPhong >= 2;
+SELECT 
+    g.guest_name, 
+    COUNT(b.booking_id) as SoLanDat
+FROM guests g
+JOIN bookings b ON g.guest_id = b.guest_id
+GROUP BY g.guest_id, g.guest_name
+HAVING SoLanDat >= 2;
 -- ● Tìm loại phòng có số lượt đặt phòng nhiều nhất
-	
+	SELECT 
+    r.room_type, 
+    COUNT(b.booking_id) as SoLuotDat
+FROM rooms r
+JOIN bookings b ON r.room_id = b.room_id
+GROUP BY r.room_type
+ORDER BY SoLuotDat DESC
+LIMIT 1;
 -- ● Cho biết số lượng phòng của từng loại phòng
-
+	SELECT 
+    room_type, 
+    COUNT(room_id) as SoLuongPhong
+FROM rooms
+GROUP BY room_type;
 -- PHẦN III – TRUY VẤN LỒNG 
 -- ● Hiển thị những phòng có giá thuê cao hơn giá trung bình của tất cả 
 -- các phòng 
