@@ -86,7 +86,7 @@ JOIN bookings b
     ON g.guest_id = b.guest_id
 JOIN rooms r
     ON b.room_id = r.room_id;
-    
+
 SELECT
     g.guest_name,
     count(g.guest_name) as 'SoLanDatPhong'
@@ -114,20 +114,23 @@ having count(g.guest_name)>=2;
 
 SELECT
     r.room_type,
-    count(r.room_type)
+    COUNT(b.booking_id) AS so_luot_dat
 FROM rooms r
-JOIN bookings b
-    ON r.room_id = b.room_id
-group by r.room_type;
+JOIN bookings b ON r.room_id = b.room_id
+GROUP BY r.room_type
+ORDER BY so_luot_dat DESC
+LIMIT 1;
 
 SELECT r.room_id, r.room_type, r.price_per_day
 FROM rooms r
 WHERE r.price_per_day > (SELECT AVG(r.price_per_day) FROM rooms r);
 
-
-SELECT r.room_id, r.room_type, r.price_per_day
-FROM rooms r
-WHERE r.price_per_day = 
+SELECT guest_name
+FROM guests
+WHERE guest_id NOT IN (
+    SELECT guest_id
+    FROM bookings
+);
 
 
 
