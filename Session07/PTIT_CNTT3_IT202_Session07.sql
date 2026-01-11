@@ -79,6 +79,7 @@ WHERE product_id IN (
     SELECT product_id
     FROM order_items
 );
+
 -- Bài 03
 select order_id, order_date, total_amount
 from orders
