@@ -432,3 +432,5 @@ SELECT
 FROM view_popular_posts
 WHERE (total_likes + total_comments) > 10
 ORDER BY total_interaction DESC;
+
+-- bai 10 
