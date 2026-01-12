@@ -863,59 +863,49 @@ select @diem as 'điểm số',
 drop procedure if exists calculate_user_activity_score;
 
 -- bai 6
-DELIMITER //
-
-CREATE PROCEDURE NotifyFriendsOnNewPost(
-    IN p_user_id INT, 
+DELIMITER $$
+CREATE PROCEDURE sp_notify_friends_on_new_post (
+    IN p_user_id INT,
     IN p_content TEXT
 )
 BEGIN
-    DECLARE v_sender_name VARCHAR(100); 
-    DECLARE v_friend_id INT;            
-    DECLARE v_done INT DEFAULT FALSE;   
+    DECLARE v_post_id INT;
+    DECLARE v_full_name VARCHAR(100);
 
-    
-    DECLARE cur_friends CURSOR FOR 
-        SELECT friend_id FROM friends WHERE user_id = p_user_id AND status = 'accepted'
-        UNION
-        SELECT user_id FROM friends WHERE friend_id = p_user_id AND status = 'accepted';
+    SELECT full_name
+    INTO v_full_name
+    FROM users
+    WHERE user_id = p_user_id;
 
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = TRUE;
+    INSERT INTO posts (user_id, content)
+    VALUES (p_user_id, p_content);
 
+    SET v_post_id = LAST_INSERT_ID();
 
-    SELECT full_name INTO v_sender_name FROM users WHERE user_id = p_user_id;
-
-    INSERT INTO posts (user_id, content) VALUES (p_user_id, p_content);
-
-    OPEN cur_friends; 
-
-    read_loop: LOOP
-        FETCH cur_friends INTO v_friend_id;
-
-        IF v_done THEN
-            LEAVE read_loop;
-        END IF;
-
-        INSERT INTO notifications (user_id, type, content, is_read)
-        VALUES (v_friend_id, 'new_post', CONCAT(v_sender_name, ' đã đăng một bài viết mới'), 0);
-        
-    END LOOP;
-
-    CLOSE cur_friends; 
-
-END //
-
+    INSERT INTO notifications (user_id, type, content)
+    SELECT 
+        CASE 
+            WHEN f.user_id = p_user_id THEN f.friend_id
+            ELSE f.user_id
+        END,
+        'new_post',
+        CONCAT(v_full_name, ' đã đăng một bài viết mới')
+    FROM friends f
+    WHERE f.status = 'accepted'
+      AND (f.user_id = p_user_id OR f.friend_id = p_user_id)
+      AND (
+            CASE 
+                WHEN f.user_id = p_user_id THEN f.friend_id
+                ELSE f.user_id
+            END
+          ) <> p_user_id;
+END $$
 DELIMITER ;
 
-CALL NotifyFriendsOnNewPost(1, 'Hôm nay trời đẹp quá! Test cursor notification.');
+CALL sp_notify_friends_on_new_post(1, 'Hôm nay mình vừa hoàn thành bài Stored Procedure nâng cao');
 
+SELECT *
+FROM notifications
+WHERE content LIKE '%đã đăng một bài viết mới%';
 
-
-SELECT * FROM posts WHERE user_id = 1 ORDER BY created_at DESC LIMIT 1;
-
-SELECT * FROM notifications 
-WHERE type = 'new_post' 
-AND content LIKE '%Nguyễn Văn An%'
-ORDER BY created_at DESC;
-
-DROP PROCEDURE IF EXISTS NotifyFriendsOnNewPost;
+DROP PROCEDURE IF EXISTS sp_notify_friends_on_new_post;
