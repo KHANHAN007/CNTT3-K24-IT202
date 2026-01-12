@@ -747,7 +747,7 @@ CREATE PROCEDURE CalculatePostLikes (
     OUT total_likes INT
 )
 BEGIN
-    SELECT COUNT(*)
+    SELECT COUNT(user_id)
     INTO total_likes
     FROM likes
     WHERE post_id = p_post_id;
@@ -759,6 +759,7 @@ CALL CalculatePostLikes(1, @total_likes);
 SELECT @total_likes;
 
 DROP PROCEDURE IF EXISTS CalculatePostLikes;
+
 
 -- Bai 3:
 
