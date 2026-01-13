@@ -159,5 +159,5 @@ DELIMITER ;
 SET @newscore = 11;
 CALL UpdateScore_IT_DB('S00001', @newscore);
 SELECT @newscore AS UpdatedValue;
-SELECT * FROM View_IT_Enrollment_DB WHERE StudentID = 'S00001';
+SELECT e.StudentID, e.CourseID, e.Score FROM View_IT_Enrollment_DB WHERE StudentID = 'S00001';
 			
