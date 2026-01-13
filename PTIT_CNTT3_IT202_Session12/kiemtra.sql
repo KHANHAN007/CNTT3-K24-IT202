@@ -66,6 +66,7 @@ INSERT INTO Enrollment VALUES
 ('S00008','C00002',6.5);
 
 
+
 -- phần a - cơ bản
 
 -- câu 1: tạo view view_studentbasic và truy vấn
@@ -74,7 +75,7 @@ create or replace view view_studentbasic as
 	from student s
 	join department d on s.deptid = d.deptid;
 
-select s.studentid, s.fullname, d.deptname from view_studentbasic;
+select * from view_studentbasic;
 
 -- câu 2: tạo regular index cho cột fullname
 create index idx_student_fullname on student(fullname);
