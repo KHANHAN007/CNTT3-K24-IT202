@@ -1,0 +1,57 @@
+CREATE DATABASE IF NOT EXISTS social_network;
+USE social_network;
+
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    total_posts INT DEFAULT 0
+);
+
+CREATE TABLE posts (
+    post_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    content TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+INSERT INTO users (username, total_posts)
+VALUES ('nguyen_van_a', 0),
+       ('le_thi_b', 0);
+
+DELIMITER //
+
+CREATE PROCEDURE sp_create_post (
+    IN p_user_id INT,
+    IN p_content TEXT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Transaction failed';
+    END;
+
+    IF p_content IS NULL OR TRIM(p_content) = '' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Content is empty';
+    END IF;
+
+    START TRANSACTION;
+
+        INSERT INTO posts (user_id, content)
+        VALUES (p_user_id, p_content);
+
+        UPDATE users
+        SET total_posts = total_posts + 1
+        WHERE user_id = p_user_id;
+
+    COMMIT;
+END //
+
+DELIMITER ;
+
+CALL sp_create_post(1, 'Bai viet dau tien');
+
+CALL sp_create_post(9999, 'Bai viet loi');
